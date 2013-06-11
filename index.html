@@ -105,15 +105,151 @@
 
 <section>
     <h1>
-        The <span class="proxy-color">Proxy Pattern</span>
-        <br/>
-        in <span class="php-color" style="font-size: 120%;">PHP</span>
+        <span class="doctrine-color">Doctrine 2</span>
+        &amp;
+        <span class="zf-color">ZF2</span>
+    </h1>
+    <h1>
+        <img
+                src="assets/img/doctrine.svg"
+                alt="Doctrine Project" border="0"
+                height="200px"
+                style="margin-bottom: -50px; "
+                />
+        +
+        <img
+            src="assets/img/zf-logo.svg"
+            alt="Zend Framework 2"
+            border="0"
+            height="200px"
+            style="margin-bottom: -50px;"
+        />
     </h1>
 </section>
 
 <section>
-    <h2>What is a <span class="proxy-color">Proxy</span>?</h2>
+    <h2>What is <span class="doctrine-color">Doctrine ORM</span>?</h2>
+    <p class="fragment">
+        <span class="doctrine-color">Doctrine ORM</span> is an Object Relational Mapper
+    </p>
+    <p class="fragment">
+        It is inspired by Hibernate and the <abbr title="Java Persistece API">JPA</abbr> (JSR-317)
+    </p>
+    <p class="fragment">
+        It is based on a
+        <abbr title="Database Abstraction Layer" class="doctrine-color">DBAL</abbr>
+        (DataBase Abstraction Layer)
+    </p>
+    <p class="fragment">
+        Allows developers to save and load <abbr title="Plain Old PHP Object">POPO</abbr> with SQL
+    </p>
+
+    <aside class="notes">
+        Also consider that Doctrine ORM abstract the underlying SQL dialect of the DB platform you are
+        using, so it's possible for you to switch DB vendor from a day to another
+    </aside>
 </section>
+
+<section>
+    <p>
+        An <span class="doctrine-color">ORM</span> gives you the impression that you are working
+        with a "virtual" graph composed by objects...
+    </p>
+    <p class="fragment">... backed by any persistence layer!</p>
+</section>
+
+<section>
+    <p>
+        Simply put:
+    </p>
+    <h2 class="fragment doctrine-color">Forget the database!</h2>
+
+    <aside class="notes">
+        The job of an ORM is all about abstracting the underlying data structure into something that
+        gives the developer access to what looks like an in-memory representation of the database.
+    </aside>
+</section>
+
+<section>
+    <p>Doctrine works with simple objects (<abbr title="Plain Old PHP Objects" class="doctrine-color">POPO</abbr>)</p>
+    <p class="fragment">
+        Objects with an identifier are defined as <span class="doctrine-color">Entities</span>
+    </p>
+</section>
+
+<section>
+    <h2>Write your first <span class="doctrine-color">entity</span></h2>
+</section>
+
+<section>
+    <pre><code contenteditable>namespace Application\Entity;
+use Doctrine\ORM\Mapping as ORM;
+
+/** @ORM\Entity */
+class User {
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    protected $id;
+
+    /** @ORM\Column(type="string") */
+    protected $fullName;
+
+    // getters/setters
+}</code></pre>
+</section>
+
+<section>
+    <h2>Test it!</h2>
+</section>
+
+<section>
+    <pre><code contenteditable>$objectManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
+
+$user = new \Application\Entity\User();
+$user->setFullName('Marco Pivetta');
+
+$objectManager->persist($user);
+$objectManager->flush();
+
+var_dump($user->getId());</code></pre>
+</section>
+
+<!-- modules description - move later in the text! -->
+<section>
+    <h2>
+        The <span class="zf-color">Modules</span>!
+    </h2>
+    <p class="fragment">
+        <span class="zf-color">DoctrineModule</span>
+        <br/>
+        basic common functionality
+    </p>
+    <p class="fragment">
+        <span class="zf-color">DoctrineORMModule</span>
+        <br/>
+        ORM/SQL Connection
+    </p>
+    <p class="fragment">
+        <span class="zf-color">DoctrineMongoODMModule</span>
+        <br/>
+        ODM/MongoDB Connection
+    </p>
+
+    <aside class="notes">
+        DoctrineModule is a set of functionality common to all ZF2-Doctrine integration layers
+    </aside>
+</section>
+
+
+<section data-state="soothe">
+    <p>
+        <img src="http://yuml.me/diagram/scruffy;dir:TB;/class/[doctrine/common{bg:orange}]<-.- [doctrine/doctrine-module{bg:green}],[doctrine/orm{bg:orange}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/mongodb-odm{bg:orange}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/common{bg:orange}]<-.- [doctrine/mongodb-odm{bg:orange}],[doctrine/common{bg:orange}]<-.- [doctrine/orm{bg:orange}]">
+    </p>
+</section>
+
 <section>
     <p>
         A <span class="proxy-color">proxy</span>
