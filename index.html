@@ -2,8 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8" />
-    <title>OOP Proxies in PHP</title>
-    <meta name="description" content="The Proxy OOP Pattern in PHP: how to use it and how to know when we need it" />
+    <title>An introduction to Doctrine 2 persistence with Zend Framework 2</title>
+    <meta
+        name="description"
+        content="Using Doctrine 2 ORM, ODM and other persistence layers in a Zend Framework 2 application"
+    />
     <meta name="author" content="Marco Pivetta" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -160,7 +163,7 @@
 
 <section>
     <p>
-        Simply put:
+        Simpler:
     </p>
     <h2 class="fragment doctrine-color">Forget the database!</h2>
 
@@ -177,9 +180,11 @@
     </p>
 </section>
 
+<!--
 <section>
     <h2>Write your first <span class="doctrine-color">entity</span></h2>
 </section>
+-->
 
 <section>
     <pre><code contenteditable>namespace Application\Entity;
@@ -202,14 +207,36 @@ class User {
 </section>
 
 <section>
-    <h2>Test it!</h2>
+    <h2>Everything OK so far?</h2>
+    <pre class="fragment"><code contenteditable>php public/index.php orm:validate-schema</code></pre>
+    <p class="fragment">
+        <img src="assets/img/validate-mappings.png" alt="Validate schema mappings" />
+    </p>
 </section>
 
 <section>
-    <pre><code contenteditable>$objectManager = $serviceLocator->get('Doctrine\ORM\EntityManager');
+    <h2><span class="doctrine-color">Generate</span> the database</h2>
+    <pre class="fragment"><code contenteditable>php public/index.php orm:schema-tool:create</code></pre>
+    <p class="fragment">
+        <img src="assets/img/database-generated-successfully.png" alt="generating the database"/>
+    </p>
+</section>
+
+<!--
+<section>
+    <h2>Let's use it!</h2>
+</section>
+-->
+
+<section>
+    <pre><code contenteditable>$objectManager = \Doctrine\ORM\EntityManager::create(/* yadda */);</code></pre>
+</section>
+
+<section>
+    <pre><code contenteditable>$objectManager = \Doctrine\ORM\EntityManager::create(/* yadda */);
 
 $user = new \Application\Entity\User();
-$user->setFullName('Marco Pivetta');
+$user->setFullName('Zaphod Beeblebrox');
 
 $objectManager->persist($user);
 $objectManager->flush();
@@ -217,7 +244,13 @@ $objectManager->flush();
 var_dump($user->getId());</code></pre>
 </section>
 
+<section>
+    <h1>ಠ_ಠ</h1>
+</section>
+
 <!-- modules description - move later in the text! -->
+
+<!--
 <section>
     <h2>
         The <span class="zf-color">Modules</span>!
@@ -250,6 +283,8 @@ var_dump($user->getId());</code></pre>
     </p>
 </section>
 
+-->
+
 </div>
 </div>
 
@@ -266,7 +301,7 @@ var_dump($user->getId());</code></pre>
         center: true,
 
         theme: Reveal.getQueryHash().theme || 'sky', // available themes are in /css/theme
-        transition: Reveal.getQueryHash().transition || 'page', // default/cube/page/concave/zoom/linear/none
+        transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/none
 
         // Optional libraries used to extend on reveal.js
         dependencies: [
