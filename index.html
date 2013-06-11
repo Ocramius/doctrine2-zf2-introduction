@@ -272,7 +272,7 @@ var_dump($user->getId()); // 1</code></pre>
     ->getRepository('Application\Entity\User')
     ->findOneBy(array('name' => 'Marvin'));
 
-$marvin->setName('Marvin the Paranoid Robot');
+$marvin->setName('Marvin the Paranoid Android');
 
 $objectManager->flush();</code></pre>
 </section>
@@ -285,6 +285,108 @@ $objectManager->flush();</code></pre>
 
 $objectManager->remove($president);
 $objectManager->flush();</code></pre>
+</section>
+
+<section>
+    <h2>Associations</h2>
+</section>
+
+<section>
+    <pre><code contenteditable>namespace Application\Entity;
+use Doctrine\ORM\Mapping as ORM;
+
+/** @ORM\Entity */
+class Address {
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    protected $id;
+
+    /** @ORM\Column(type="string") */
+    protected $country;
+
+    // getters/setters
+}</code></pre>
+</section>
+
+<section>
+    <pre><code contenteditable>class User {
+    // ...
+
+    /** @ORM\ManyToOne(targetEntity="Address") */
+    protected $address;
+
+    // ...
+}</code></pre>
+</section>
+<section>
+    <pre><code contenteditable>$user = new User();
+$user->setName('Arthur Dent');
+$objectManager->persist($user);
+
+$address = new Address();
+$address->setCountry('UK');
+$objectManager->persist($address);
+
+$user->setAddress($address);
+$objectManager->flush();</code></pre>
+</section>
+
+<section>
+    <pre><code contenteditable>$user = $objectManager
+    ->getRepository('Application\Entity\User')
+    ->findOneBy(array('name' => 'Arthur Dent'));
+
+echo $user->getAddress()->getCountry(); // UK</code></pre>
+</section>
+
+<section>
+    <pre><code contenteditable>class User {
+    // ...
+
+    /** @ORM\ManyToMany(targetEntity="User") */
+    protected $friends;
+
+    public function __construct() {
+        $this->friends = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    // ...
+}</code></pre>
+</section>
+
+<section>
+    <pre><code contenteditable>$arthur = new User();
+$arthur->setName('Arthur Dent');
+$objectManager->persist($arthur);
+
+$trillian = new User();
+$trillian->setName('Tricia Marie McMillan');
+$objectManager->persist($trillian);
+
+$zaphod = new User();
+$zaphod->setName('Zaphod Beeblebrox');
+$objectManager->persist($zaphod);
+
+$arthur->getFriends()->add($trillian);
+$trillian->getFriends()->add($zaphod);
+
+$objectManager->flush();</code></pre>
+</section>
+
+<section>
+<pre><code contenteditable>$arthur = $objectManager
+    ->getRepository('Application\Entity\User')
+    ->findOneBy(array('name' => 'Arthur Dent'));
+
+foreach ($arthur->getFriends() as $friend) {
+    echo $friend->getName() . "\n";
+}</code></pre>
+
+    <p class="fragment">Note: Trillian doesn't see Arthur as a friend</p>
+    <p class="fragment">Note2: Zaphod doesn't see Trillian as a friend</p>
 </section>
 
 <!-- modules description - move later in the text! -->
