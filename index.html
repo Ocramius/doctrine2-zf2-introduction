@@ -200,7 +200,7 @@ class User {
     protected $id;
 
     /** @ORM\Column(type="string") */
-    protected $fullName;
+    protected $name;
 
     // getters/setters
 }</code></pre>
@@ -236,7 +236,7 @@ class User {
     <pre><code contenteditable>$objectManager = \Doctrine\ORM\EntityManager::create(/* yadda */);
 
 $user = new \Application\Entity\User();
-$user->setFullName('Zaphod Beeblebrox');
+$user->setName('Zaphod Beeblebrox');
 
 $objectManager->persist($user);
 $objectManager->flush();
@@ -246,6 +246,45 @@ var_dump($user->getId());</code></pre>
 
 <section>
     <h1>ಠ_ಠ</h1>
+</section>
+
+<section>
+    <h3><span class="doctrine-color">Persisting</span> an object</h3>
+    <pre><code contenteditable>$user = new \Application\Entity\User();
+$user->setName('Arthur Dent');
+
+$objectManager->persist($user); // $user is now "managed"
+$objectManager->flush();        // commit changes to db
+
+var_dump($user->getId()); // 1</code></pre>
+</section>
+
+<section>
+    <h3><span class="doctrine-color">Loading</span> an object</h3>
+    <pre><code contenteditable>$ford = $objectManager
+    ->getRepository('Application\Entity\User')
+    ->findOneBy(array('name' => 'Ford Prefect'));</code></pre>
+</section>
+
+<section>
+    <h3><span class="doctrine-color">Updating</span> an object</h3>
+    <pre><code contenteditable>$marvin = $objectManager
+    ->getRepository('Application\Entity\User')
+    ->findOneBy(array('name' => 'Marvin'));
+
+$marvin->setName('Marvin the Paranoid Robot');
+
+$objectManager->flush();</code></pre>
+</section>
+
+<section>
+    <h3><span class="doctrine-color">Deleting</span> an object</h3>
+    <pre><code contenteditable>$president = $objectManager
+    ->getRepository('Application\Entity\User')
+    ->findOneBy(array('name' => 'Zaphod Beeblebrox'));
+
+$objectManager->remove($president);
+$objectManager->flush();</code></pre>
 </section>
 
 <!-- modules description - move later in the text! -->
