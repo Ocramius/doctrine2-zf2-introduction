@@ -389,9 +389,10 @@ foreach ($arthur->getFriends() as $friend) {
     <p class="fragment">Note2: Zaphod doesn't see Trillian as a friend</p>
 </section>
 
-<!-- modules description - move later in the text! -->
+<section>
+    <h2><span class="doctrine-color">Doctrine ORM</span> + <span class="zf-color">Zend Framework 2</span></h2>
+</section>
 
-<!--
 <section>
     <h2>
         The <span class="zf-color">Modules</span>!
@@ -417,14 +418,86 @@ foreach ($arthur->getFriends() as $friend) {
     </aside>
 </section>
 
-
 <section data-state="soothe">
     <p>
-        <img src="http://yuml.me/diagram/scruffy;dir:TB;/class/[doctrine/common{bg:orange}]<-.- [doctrine/doctrine-module{bg:green}],[doctrine/orm{bg:orange}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/mongodb-odm{bg:orange}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/common{bg:orange}]<-.- [doctrine/mongodb-odm{bg:orange}],[doctrine/common{bg:orange}]<-.- [doctrine/orm{bg:orange}]">
+        <img src="http://yuml.me/diagram/dir:TB;/class/[doctrine/common{bg:orange}]<-.- [doctrine/doctrine-module{bg:green}],[doctrine/orm{bg:orange}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/mongodb-odm{bg:orange}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/common{bg:orange}]<-.- [doctrine/mongodb-odm{bg:orange}],[doctrine/common{bg:orange}]<-.- [doctrine/orm{bg:orange}]">
     </p>
 </section>
 
--->
+<section>
+    <h2>Installation!</h2>
+</section>
+
+<section>
+    <pre><code contenteditable>php composer.phar require doctrine/doctrine-orm-module:0.7.*</code></pre>
+</section>
+
+<section>
+    <img src="assets/img/waiting-meme.png" width="600px" alt="Wait a bit"/>
+</section>
+
+<section>
+    <img src="assets/img/successful-installation.png" alt="Doctrine ORM Module successfully installed!"/>
+</section>
+
+<section>
+    <pre><code contenteditable>php composer.phar require zendframework/zend-developer-tools:dev-master</code></pre>
+</section>
+
+<section>
+    <img src="assets/img/waiting-meme.png" width="600px" alt="Wait a bit more"/>
+</section>
+
+<section>
+    <h3>Enabling the <span class="zf-color">modules</span></h3>
+    <pre><code>config/application.config.php</code></pre>
+<pre><code contenteditable>return [
+    'modules' => [
+        'ZendDeveloperTools',
+        'DoctrineModule',
+        'DoctrineORMModule',
+        'Application',
+    ],
+    // [...]
+];</code></pre>
+</section>
+
+
+<section>
+    <h2>Configure <span class="doctrine-color">mappings</span></h2>
+    <pre><code>module/Application/config/module.config.php</code></pre>
+    <pre><code contenteditable>return [
+    'doctrine' => [
+        'driver' => [
+            'application_entities' => [
+                'class' =>'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Application/Entity']
+            ],
+
+            'orm_default' => [
+                'drivers' => [
+                    'Application\Entity' => 'application_entities'
+                ]
+]]], // [...]</code></pre>
+</section>
+
+<section>
+    <h2>Configure <span class="doctrine-color">connection</span></h2>
+    <pre><code>config/autoload/doctrine.local.php</code></pre>
+<pre><code contenteditable>return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+            'driverClass' =>'Doctrine\DBAL\Driver\PDOMySql\Driver',
+            'params' => [
+                'host'     => 'localhost',
+                'port'     => '3306',
+                'user'     => 'username',
+                'password' => 'password',
+                'dbname'   => 'database',
+]]]]];</code></pre>
+</section>
 
 </div>
 </div>
