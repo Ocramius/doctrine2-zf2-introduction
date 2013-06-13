@@ -214,14 +214,124 @@
     </p>
 </section>
 
-<!--
+
+<section>
+    <h2><span class="doctrine-color">Doctrine ORM</span> + <span class="zf-color">Zend Framework 2</span></h2>
+</section>
+
+<section>
+    <h2>
+        The <span class="zf-color">Modules</span>!
+    </h2>
+    <p class="fragment">
+        <span class="zf-color">DoctrineModule</span>
+        <br/>
+        basic common functionality
+    </p>
+    <p class="fragment">
+        <span class="zf-color">DoctrineORMModule</span>
+        <br/>
+        ORM/SQL Connection
+    </p>
+    <p class="fragment">
+        <span class="zf-color">DoctrineMongoODMModule</span>
+        <br/>
+        ODM/MongoDB Connection
+    </p>
+
+    <aside class="notes">
+        DoctrineModule is a set of functionality common to all ZF2-Doctrine integration layers
+    </aside>
+</section>
+
+<section data-state="soothe">
+    <p>
+        <img src="http://yuml.me/diagram/dir:TB;/class/[doctrine/common{bg:orange}]<-.- [doctrine/doctrine-module{bg:green}],[doctrine/orm{bg:orange}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/mongodb-odm{bg:orange}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/common{bg:orange}]<-.- [doctrine/mongodb-odm{bg:orange}],[doctrine/common{bg:orange}]<-.- [doctrine/orm{bg:orange}]">
+    </p>
+</section>
+
+<section>
+    <h2>Installation!</h2>
+</section>
+
+<section>
+    <pre><code contenteditable>git clone git://github.com/zendframework/ZendSkeletonApplication.git demo
+    
+cd demo
+
+php composer.phar require doctrine/doctrine-orm-module:0.8.* \
+    zendframework/zend-developer-tools:0.*
+    
+cd public
+
+php -S localhost:8000</code></pre>
+</section>
+
+<section>
+    <img src="assets/img/waiting-meme.png" width="600px" alt="Wait a bit"/>
+</section>
+
+<section>
+    <img src="assets/img/successful-installation.png" alt="Doctrine ORM Module successfully installed!"/>
+</section>
+
+<section>
+    <h3>Enabling the <span class="zf-color">modules</span></h3>
+    <pre><code>config/application.config.php</code></pre>
+<pre><code contenteditable>return [
+    'modules' => [
+        'ZendDeveloperTools',
+        'DoctrineModule',
+        'DoctrineORMModule',
+        'Application',
+    ],
+    // [...]
+];</code></pre>
+</section>
+
+<section>
+    <h2>Configure <span class="doctrine-color">mappings</span></h2>
+    <pre class="fragment"><code>module/Application/config/module.config.php</code></pre>
+    <pre class="fragment"><code contenteditable>return [
+    'doctrine' => [
+        'driver' => [
+            'application_entities' => [
+                'class' =>'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => [__DIR__ . '/../src/Application/Entity']
+            ],
+
+            'orm_default' => [
+                'drivers' => [
+                    'Application\Entity' => 'application_entities'
+                ]
+]]], // [...]</code></pre>
+</section>
+
+<section>
+    <h2>Configure <span class="doctrine-color">connection</span></h2>
+    <pre class="fragment"><code>config/autoload/doctrine.local.php</code></pre>
+<pre class="fragment"><code contenteditable>return [
+    'doctrine' => [
+        'connection' => [
+            'orm_default' => [
+            'driverClass' =>'Doctrine\DBAL\Driver\PDOMySql\Driver',
+            'params' => [
+                'host'     => 'localhost',
+                'port'     => '3306',
+                'user'     => 'username',
+                'password' => 'password',
+                'dbname'   => 'database',
+]]]]];</code></pre>
+</section>
+
 <section>
     <h2>Write your first <span class="doctrine-color">entity</span></h2>
 </section>
--->
 
 <section>
-    <pre><code contenteditable>namespace Application\Entity;
+    <pre><code contenteditable>module/Application/src/Application/Entity/User.php</code></pre>
+    <pre class="fragment"><code contenteditable>namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** @ORM\Entity */
@@ -263,19 +373,20 @@ class User {
 -->
 
 <section>
-    <pre><code contenteditable>$objectManager = \Doctrine\ORM\EntityManager::create(/* yadda */);</code></pre>
-</section>
+    <pre><code contenteditable>module/Application/src/Application/Controller/IndexController.php</code></pre>
+    <pre class="fragment"><code contenteditable>public function indexAction() {
+    $objectManager = $this
+        ->getServiceLocator()
+        ->get('Doctrine\ORM\EntityManager');
+    
+    $user = new \Application\Entity\User();
+    $user->setName('Zaphod Beeblebrox');
 
-<section>
-    <pre><code contenteditable>$objectManager = \Doctrine\ORM\EntityManager::create(/* yadda */);
+    $objectManager->persist($user);
+    $objectManager->flush();
 
-$user = new \Application\Entity\User();
-$user->setName('Zaphod Beeblebrox');
-
-$objectManager->persist($user);
-$objectManager->flush();
-
-var_dump($user->getId());</code></pre>
+    die($user->getId());
+}</code></pre>
 </section>
 
 <section>
@@ -418,269 +529,11 @@ $objectManager->flush();</code></pre>
 foreach ($arthur->getFriends() as $friend) {
     echo $friend->getName() . "\n";
 }</code></pre>
-
-    <p class="fragment">Note: Trillian doesn't see Arthur as a friend</p>
-    <p class="fragment">Note2: Zaphod doesn't see Trillian as a friend</p>
-</section>
-
-<section>
-    <h2><span class="doctrine-color">Doctrine ORM</span> + <span class="zf-color">Zend Framework 2</span></h2>
-</section>
-
-<section>
-    <h2>
-        The <span class="zf-color">Modules</span>!
-    </h2>
-    <p class="fragment">
-        <span class="zf-color">DoctrineModule</span>
-        <br/>
-        basic common functionality
-    </p>
-    <p class="fragment">
-        <span class="zf-color">DoctrineORMModule</span>
-        <br/>
-        ORM/SQL Connection
-    </p>
-    <p class="fragment">
-        <span class="zf-color">DoctrineMongoODMModule</span>
-        <br/>
-        ODM/MongoDB Connection
-    </p>
-
-    <aside class="notes">
-        DoctrineModule is a set of functionality common to all ZF2-Doctrine integration layers
-    </aside>
-</section>
-
-<section data-state="soothe">
-    <p>
-        <img src="http://yuml.me/diagram/dir:TB;/class/[doctrine/common{bg:orange}]<-.- [doctrine/doctrine-module{bg:green}],[doctrine/orm{bg:orange}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/mongodb-odm{bg:orange}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-orm-module{bg:green}],[doctrine/doctrine-module{bg:green}]<-.- [doctrine/doctrine-mongo-odm-module{bg:green}],[doctrine/common{bg:orange}]<-.- [doctrine/mongodb-odm{bg:orange}],[doctrine/common{bg:orange}]<-.- [doctrine/orm{bg:orange}]">
-    </p>
-</section>
-
-<section>
-    <h2>Installation!</h2>
-</section>
-
-<section>
-    <pre><code contenteditable>php composer.phar require doctrine/doctrine-orm-module:0.7.*</code></pre>
-</section>
-
-<section>
-    <img src="assets/img/waiting-meme.png" width="600px" alt="Wait a bit"/>
-</section>
-
-<section>
-    <img src="assets/img/successful-installation.png" alt="Doctrine ORM Module successfully installed!"/>
-</section>
-
-<section>
-    <pre><code contenteditable>php composer.phar require zendframework/zend-developer-tools:dev-master</code></pre>
-</section>
-
-<section>
-    <img src="assets/img/waiting-meme.png" width="600px" alt="Wait a bit more"/>
-</section>
-
-<section>
-    <h3>Enabling the <span class="zf-color">modules</span></h3>
-    <pre><code>config/application.config.php</code></pre>
-<pre><code contenteditable>return [
-    'modules' => [
-        'ZendDeveloperTools',
-        'DoctrineModule',
-        'DoctrineORMModule',
-        'Application',
-    ],
-    // [...]
-];</code></pre>
-</section>
-
-
-<section>
-    <h2>Configure <span class="doctrine-color">mappings</span></h2>
-    <pre><code>module/Application/config/module.config.php</code></pre>
-    <pre><code contenteditable>return [
-    'doctrine' => [
-        'driver' => [
-            'application_entities' => [
-                'class' =>'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'cache' => 'array',
-                'paths' => [__DIR__ . '/../src/Application/Entity']
-            ],
-
-            'orm_default' => [
-                'drivers' => [
-                    'Application\Entity' => 'application_entities'
-                ]
-]]], // [...]</code></pre>
-</section>
-
-<section>
-    <h2>Configure <span class="doctrine-color">connection</span></h2>
-    <pre><code>config/autoload/doctrine.local.php</code></pre>
-<pre><code contenteditable>return [
-    'doctrine' => [
-        'connection' => [
-            'orm_default' => [
-            'driverClass' =>'Doctrine\DBAL\Driver\PDOMySql\Driver',
-            'params' => [
-                'host'     => 'localhost',
-                'port'     => '3306',
-                'user'     => 'username',
-                'password' => 'password',
-                'dbname'   => 'database',
-]]]]];</code></pre>
-</section>
-
-<section>
-    <h2>Test it!</h2>
-    <pre><code>module/Application/src/Application/Controller/IndexController.php</code></pre>
-    <pre><code contenteditable>public function indexAction() {
-    $objectManager = $this
-        ->getServiceLocator()
-        ->get('Doctrine\ORM\EntityManager');
-
-    $user = new \Application\Entity\User();
-    $user->setFullName('Slartibarfast');
-
-    $objectManager->persist($user);
-    $objectManager->flush();
-
-    die(var_dump($user->getId()));
-}</code></pre>
-</section>
-
-<!-- @todo maybe move all these to an "extras" section at the end? -->
-<section>
-    <h2><span class="zf-color">DoctrineModule</span> <br/> goodies</h2>
-</section>
-
-<section data-state="soothe">
-    <h2><span class="doctrine-color"><abbr title="Enhanced entity-relationship">EER</abbr> UML model</span></h2>
-    <p>
-        See what your entities look like in a graph:
-    </p>
-    <p>
-        <img src="assets/img/sample-eer-diagram.png" alt="Example EER UML diagram generated by DoctrineORMModule"/>
-    </p>
-</section>
-
-<section>
-    <h2><span class="zf-color">Paginator</span> Adapter</h2>
-    <pre><code contenteditable>use Doctrine\Common\Collections\ArrayCollection;
-use DoctrineModule\Paginator\Adapter\Collection as Adapter;
-use Zend\Paginator\Paginator;
-
-// Create a Doctrine Collection
-$collection = new ArrayCollection(range(1, 101));
-
-// Create the paginator itself
-$paginator = new Paginator(new Adapter($collection));
-
-$paginator
-    ->setCurrentPageNumber(1)
-    ->setItemCountPerPage(5);</code></pre>
-</section>
-
-<section>
-    <h2>
-        <span class="doctrine-color">ORM</span> <span class="zf-color">Paginator</span> Adapter
-    </h2>
-    <pre><code contenteditable>use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
-use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-use Zend\Paginator\Paginator;
-
-// Create a Doctrine Collection
-$query = $em->createQuery('SELECT u FROM User u JOIN u.friends f');
-
-// Create the paginator itself
-$paginator = new Paginator(
-    new DoctrinePaginator(new ORMPaginator($query))
-);
-
-$paginator
-    ->setCurrentPageNumber(1)
-    ->setItemCountPerPage(5);</code></pre>
-</section>
-
-
-<section>
-    <h2><span class="doctrine-color">Object-Exists</span> <span class="zf-color">Validator</span></h2>
-    <pre><code contenteditable>$repository = $objectManager
-    ->getRepository('Application\Entity\User');
-
-$validator = new \DoctrineModule\Validator\ObjectExists([
-    'object_repository' => $repository,
-    'fields' => ['email'],
-]);
-
-var_dump($validator->isValid('test@example.com'));
-var_dump($validator->isValid(['email' => 'test@example.com']));</code></pre>
-</section>
-
-<section>
-    <h2><span class="zf-color">Cache</span> bridges</h2>
-    <pre class="fragment"><code contenteditable>$zendCache = new \Zend\Cache\Storage\Adapter\Memory();
-
-$cache = new \DoctrineModule\Cache\ZendStorageCache($zendCache);</code></pre>
-
-<pre class="fragment"><code contenteditable>$doctrineCache = new \Doctrine\Common\Cache\ArrayCache();
-$options = new \Zend\Cache\Storage\Adapter\AdapterOptions();
-
-$cache = new \DoctrineModule\Cache\DoctrineCacheStorage(
-    $options,
-    $doctrineCache
-);</code></pre>
-</section>
-
-
-<section>
-    <h2><span class="zf-color">Hydrator</span></h2>
-    <pre><code contenteditable>use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
-
-$hydrator = new DoctrineObject($objectManager, 'Application\Entity\City');
-
-$city = new City();
-$data = array('name' => 'Béziers');
-
-$city = $hydrator->hydrate($data, $city);
-
-echo $city->getName(); // prints "Béziers"
-
-$dataArray = $hydrator->extract($city);
-echo $dataArray['name']; // prints "Béziers"</code></pre>
-</section>
-
-<section>
-    <h2><span class="zf-color">Form Elements</span></h2>
-    <pre><code contenteditable>$form->add([
-    'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-    'name' => 'user',
-    'options' => [
-        'object_manager' => $objectManager,
-        'target_class'   => 'Module\Entity\User',
-        'property'       => 'fullName',
-        'is_method'      => true,
-        'find_method'    => [
-            'name'   => 'findBy',
-            'params' => array(
-                'criteria' => ['active' => 1],
-                'orderBy'  => ['lastName' => 'ASC'],
-            ],
-        ],
-    ],
-]);</code></pre>
-</section>
-
-<section>
-    <h2>More stuff!</h2>
-    <p class="fragment">Works with <span class="doctrine-color">MongoDB ODM</span> too!</p>
-    <p class="fragment">
-        <span class="doctrine-color">CouchDB ODM</span> /
-        <span class="doctrine-color">PHPCR ODM</span> /
-        <span class="doctrine-color">OrientDB ODM</span>
-    </p>
+    <p class="fragment">Note: Associations have a direction!</p>
+    <!--
+    <p class="fragment">Note2: Trillian doesn't see Arthur as a friend</p>
+    <p class="fragment">Note3: Zaphod doesn't see Trillian as a friend</p>
+    -->
 </section>
 
 <section>
@@ -836,6 +689,144 @@ $recentVisitors = $collection->matching($criteria);</code></pre>
     </p>
     <p class="fragment">
         Assign values to your entities only when data is valid!
+    </p>
+</section>
+
+<!-- @todo maybe move all these to an "extras" section at the end? -->
+<section>
+    <h2><span class="zf-color">DoctrineModule</span> <br/> goodies</h2>
+</section>
+
+<section data-state="soothe">
+    <h2><span class="doctrine-color"><abbr title="Enhanced entity-relationship">EER</abbr> UML model</span></h2>
+    <p>
+        See what your entities look like in a graph:
+    </p>
+    <p>
+        <img src="assets/img/sample-eer-diagram.png" alt="Example EER UML diagram generated by DoctrineORMModule"/>
+    </p>
+</section>
+
+<section data-state="soothe">
+    <p>
+        <img src="assets/img/complex-uml.png" alt="Complex EER UML diagram generated by DoctrineORMModule"/>
+    </p>
+</section>
+
+<section>
+    <h2><span class="zf-color">Paginator</span> Adapter</h2>
+    <pre><code contenteditable>use Doctrine\Common\Collections\ArrayCollection;
+use DoctrineModule\Paginator\Adapter\Collection as Adapter;
+use Zend\Paginator\Paginator;
+
+// Create a Doctrine Collection
+$collection = new ArrayCollection(range(1, 101));
+
+// Create the paginator itself
+$paginator = new Paginator(new Adapter($collection));
+
+$paginator
+    ->setCurrentPageNumber(1)
+    ->setItemCountPerPage(5);</code></pre>
+</section>
+
+<section>
+    <h2>
+        <span class="doctrine-color">ORM</span> <span class="zf-color">Paginator</span> Adapter
+    </h2>
+    <pre><code contenteditable>use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+use Zend\Paginator\Paginator;
+
+// Create a Doctrine Collection
+$query = $em->createQuery('SELECT u FROM User u JOIN u.friends f');
+
+// Create the paginator itself
+$paginator = new Paginator(
+    new DoctrinePaginator(new ORMPaginator($query))
+);
+
+$paginator
+    ->setCurrentPageNumber(1)
+    ->setItemCountPerPage(5);</code></pre>
+</section>
+
+
+<section>
+    <h2><span class="doctrine-color">Object-Exists</span> <span class="zf-color">Validator</span></h2>
+    <pre><code contenteditable>$repository = $objectManager
+    ->getRepository('Application\Entity\User');
+
+$validator = new \DoctrineModule\Validator\ObjectExists([
+    'object_repository' => $repository,
+    'fields' => ['email'],
+]);
+
+var_dump($validator->isValid('test@example.com'));
+var_dump($validator->isValid(['email' => 'test@example.com']));</code></pre>
+</section>
+
+<section>
+    <h2><span class="zf-color">Cache</span> bridges</h2>
+    <pre class="fragment"><code contenteditable>$zendCache = new \Zend\Cache\Storage\Adapter\Memory();
+
+$cache = new \DoctrineModule\Cache\ZendStorageCache($zendCache);</code></pre>
+
+<pre class="fragment"><code contenteditable>$doctrineCache = new \Doctrine\Common\Cache\ArrayCache();
+$options = new \Zend\Cache\Storage\Adapter\AdapterOptions();
+
+$cache = new \DoctrineModule\Cache\DoctrineCacheStorage(
+    $options,
+    $doctrineCache
+);</code></pre>
+</section>
+
+
+<section>
+    <h2><span class="zf-color">Hydrator</span></h2>
+    <pre><code contenteditable>use DoctrineModule\Stdlib\Hydrator\DoctrineObject;
+
+$hydrator = new DoctrineObject($objectManager, 'Application\Entity\City');
+
+$city = new City();
+$data = array('name' => 'Béziers');
+
+$city = $hydrator->hydrate($data, $city);
+
+echo $city->getName(); // prints "Béziers"
+
+$dataArray = $hydrator->extract($city);
+echo $dataArray['name']; // prints "Béziers"</code></pre>
+</section>
+
+<section>
+    <h2><span class="zf-color">Form Elements</span></h2>
+    <pre><code contenteditable>$form->add([
+    'type' => 'DoctrineModule\Form\Element\ObjectSelect',
+    'name' => 'user',
+    'options' => [
+        'object_manager' => $objectManager,
+        'target_class'   => 'Module\Entity\User',
+        'property'       => 'fullName',
+        'is_method'      => true,
+        'find_method'    => [
+            'name'   => 'findBy',
+            'params' => array(
+                'criteria' => ['active' => 1],
+                'orderBy'  => ['lastName' => 'ASC'],
+            ],
+        ],
+    ],
+]);</code></pre>
+</section>
+
+<section>
+    <h2>More stuff!</h2>
+    <p class="fragment">Works with <span class="doctrine-color">MongoDB ODM</span> too!</p>
+    <p class="fragment">
+        <span class="doctrine-color">CouchDB ODM</span> /
+        <span class="doctrine-color">PHPCR ODM</span> /
+        <span class="doctrine-color">OrientDB ODM</span>
     </p>
 </section>
 
